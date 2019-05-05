@@ -16,23 +16,47 @@ import javax.swing.*;
  */
 public class Servidor{
     private Cliente clientes[] = new Cliente[100];
+    private Cliente listaEspera[] = new Cliente[3];
     private ServerSocket servidor;
-    private int qtdeArray;
+    private volatile int qtdeArray;
+    private volatile int qtdeListaEspera;
     private ObjectOutputStream Saida;
     private ObjectInputStream Entrada;
 
     public int getQtdeArray() {
         return qtdeArray;
     }
-
+    
+    public int getQtdeListaEspera() {
+        return qtdeListaEspera;
+    }
+    
+    public void zeraListaEspera() {
+        this.listaEspera = new Cliente[3];
+        this.qtdeListaEspera = 0;
+    }
+    
     public Cliente[] getClientes() {
         return clientes;
     }
-
     
+    public Cliente[] getListaEspera() {
+        return listaEspera;
+    }
+    
+    public ObjectOutputStream getSaida() {
+        return Saida;
+    }
+
+    public ObjectInputStream getEntrada() {
+        return Entrada;
+    }
+
     public Servidor() {
         this.qtdeArray = 0;
+        this.qtdeListaEspera = 0;
     }
+    
     public void LigaServidor() {
         try {
             
@@ -45,13 +69,13 @@ public class Servidor{
     }
     public void apresentaPlayers(Cliente cliente) {
         try {
-                this.Saida = new ObjectOutputStream(cliente.getMySocket().getOutputStream());
-                this.Saida.flush();
+                cliente.setSaida(new ObjectOutputStream(cliente.getMySocket().getOutputStream()));
+                cliente.getSaida().flush();
                 
-                this.Saida.writeObject("-------------------------------------------------\n"
+                cliente.getSaida().writeObject("-------------------------------------------------\n"
                                 + "------------BEM VINDO AO (WHO-I-AM?)-------------\n"
                                 + "-------------------------------------------------\n"
-                                + "Atualmente ha: " + this.qtdeArray + "conectados\n"
+                                + "Atualmente ha: " + this.qtdeListaEspera + "conectados\n"
                                 + "Seu jogo ira iniciar quando houver 3 ou mais players!!! Aguarde.\n");
         } catch(Exception e) {
             System.out.println("Erro: " + e.getMessage());
@@ -63,13 +87,17 @@ public class Servidor{
         try {
             Socket cliente = servidor.accept();
             
-            this.Entrada = new ObjectInputStream(cliente.getInputStream());
+            
+            
             Cliente cli = new Cliente(cliente.getInetAddress().getHostAddress());
-            cli.setNome((String)this.Entrada.readObject());
+            cli.setEntrada(new ObjectInputStream(cliente.getInputStream()));
+            cli.setNome((String) cli.getEntrada().readObject());
             
             cli.setMySocket(cliente);
             this.clientes[this.qtdeArray] = cli;
+            this.listaEspera[this.qtdeListaEspera] = cli;
             this.qtdeArray ++;
+            this.qtdeListaEspera ++;
             
             System.out.println("Usuario: " + cli.getNome()+ " Logado com o IP: " + cli.getIp());
             this.apresentaPlayers(cli);

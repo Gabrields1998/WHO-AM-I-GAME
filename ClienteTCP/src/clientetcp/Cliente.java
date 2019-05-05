@@ -14,7 +14,10 @@ import java.util.*;
  */
 public class Cliente {
     private int id;
+    private int daVez;
     private String nome;
+    private int master;
+    private Integer breakGame;
     private Socket mySocket;
     private String ip;
     private int Score;
@@ -25,10 +28,32 @@ public class Cliente {
         this.ip = ip;
         
     }
-
+    
+    public int getMaster() {
+        return this.master;
+    }
+    
+    public int getBreakGame() {
+       return this.breakGame; 
+    }
+    
+    public int getDaVez() {
+       return this.daVez; 
+    }
+    
+    public void setDaVez() {
+        try{
+            int daVez = (int)entrada.readObject();
+            this.daVez = daVez;
+        } catch(Exception e) {
+            System.out.println("Deu erro aqui: " + e.getMessage());
+        }
+        
+    }
     public void setNome(String nome) {
         this.nome = nome;
     }
+    
     public void pegaNome() {
         Scanner scan = new Scanner(System.in);
         System.out.println("Digite seu nome: ");
@@ -69,6 +94,22 @@ public class Cliente {
     public int getScore() {
         return Score;
     }
+
+    public ObjectOutputStream getSaida() {
+        return Saida;
+    }
+
+    public ObjectInputStream getEntrada() {
+        return entrada;
+    }
+
+    public void setSaida(ObjectOutputStream Saida) {
+        this.Saida = Saida;
+    }
+
+    public void setEntrada(ObjectInputStream entrada) {
+        this.entrada = entrada;
+    }
     
     public void iniciaSessao() {
         try {
@@ -81,6 +122,9 @@ public class Cliente {
                 
             this.Saida.writeObject(this.nome);
             
+            this.entrada = new ObjectInputStream(this.mySocket.getInputStream());
+            String retorno = (String)entrada.readObject();
+            System.out.println(retorno.toString());
             
         } catch(Exception e) {
             System.out.println("Deu erro aqui: " + e.getMessage());
@@ -89,15 +133,115 @@ public class Cliente {
     
     public void IniciaGame() {
         try {
+           
+            int souMestre = (int)entrada.readObject();
+            this.master = souMestre;
             
-            System.out.println("chegou aqui!!!!!!" + this.mySocket);
-            this.entrada = new ObjectInputStream(this.mySocket.getInputStream());
-            String retorno = (String)entrada.readObject();
-            System.out.println(retorno.toString());
+            int daVez = (int)entrada.readObject();
+            this.daVez = daVez;
             
+            String iniciaGame = (String)entrada.readObject();
+            System.out.println(iniciaGame.toString());
         } catch(Exception e) {
             System.out.println("Erro: " + e.getMessage());
         }
-        
+    }
+    
+    public void instrucoes() {
+        try {
+            String instrucoes = (String)entrada.readObject();
+            System.out.println(instrucoes.toString());
+        } catch(Exception e) {
+            System.out.println("Erro: " + e.getMessage());
+        }
+    }
+    
+    public void dica(){
+        try {
+// -----------------Recebe dica do servidor--------------------------
+            String recebeDica = (String)entrada.readObject();
+            Scanner scanDica = new Scanner(System.in);
+            System.out.println(recebeDica.toString());
+            this.getSaida().flush();
+            this.getSaida().writeObject(scanDica.nextLine());
+            System.out.println("\n");
+// -----------------Recebe dica do servidor--------------------------
+
+// -----------------Recebe resposta do servidor----------------------
+            String recebeResposta = (String)entrada.readObject();
+            Scanner scanResposta = new Scanner(System.in);
+            System.out.println(recebeResposta.toString());
+            this.getSaida().flush();
+            this.getSaida().writeObject(scanResposta.nextLine());
+            System.out.println("\n");
+// -----------------Recebe resposta do servidor----------------------
+        } catch(Exception e) {
+            System.out.println("Erro: " + e.getMessage());
+        }
+    }
+    
+    public void recebe() {
+         try {
+            String jogadorDaVez = (String)entrada.readObject();
+            System.out.println(jogadorDaVez.toString());
+        } catch(Exception e) {
+            System.out.println("Erro: " + e.getMessage());
+        }
+    }
+    
+    public void recebeInt() {
+         try {
+            this.breakGame = (Integer)entrada.readObject();
+            System.out.println(this.breakGame.toString());
+        } catch(Exception e) {
+            System.out.println("Erro Int: " + e.getMessage());
+        }
+    }
+    
+    public void pergunta(){
+        try {
+// -----------------Recebe pergunta do servidor--------------------------
+            String recebePergunta = (String)entrada.readObject();
+            Scanner scanPergunta = new Scanner(System.in);
+            System.out.println(recebePergunta.toString());
+            this.getSaida().flush();
+            this.getSaida().writeObject(scanPergunta.nextLine());
+            System.out.println("\n");
+// -----------------Recebe pergunta do servidor--------------------------
+        } catch(Exception e) {
+            System.out.println("Erro: " + e.getMessage());
+        }
+    }
+    
+    public void resposta(){
+        try {
+            String recebeResposta = (String)entrada.readObject();
+            Scanner scanResposta = new Scanner(System.in);
+            System.out.println(recebeResposta.toString());
+            this.getSaida().flush();
+            this.getSaida().writeObject(scanResposta.nextLine());
+            System.out.println("\n");
+        } catch(Exception e) {
+            System.out.println("Erro: " + e.getMessage());
+        }
+    }
+    
+    public Integer acertou (){
+        Integer resposta = 0;
+        try {
+// -----------------Recebe pergunta do servidor--------------------------
+            String recebePergunta = (String)entrada.readObject();
+            Scanner scanPergunta = new Scanner(System.in);
+            System.out.println(recebePergunta.toString());
+            this.getSaida().flush();
+            resposta = scanPergunta.nextInt();
+            this.getSaida().writeObject(resposta.toString());
+            System.out.println("\n");
+
+// -----------------Recebe pergunta do servidor--------------------------
+        } catch(Exception e) {
+            System.out.println("Erro: " + e.getMessage());
+        }
+        return resposta;
     }
 }

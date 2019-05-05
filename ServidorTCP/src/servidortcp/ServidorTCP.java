@@ -10,6 +10,7 @@ import java.net.*;
 import java.io.*;
 import java.util.*;
 import javax.swing.*;
+import java.lang.Thread;
 
 /**
  *
@@ -24,42 +25,42 @@ public class ServidorTCP {
         try {
             Servidor server = new Servidor();
             server.LigaServidor();
-            while(server.getQtdeArray() < 3){
-                server.connectPlayer();     
+            new Thread() {
+                @Override
+                public void run() {
+                    while(true){
+                        server.connectPlayer();
+                    }
+                }
+            }.start();
+            
+            while(true) {
+                
+                if(server.getQtdeListaEspera() >= 3) {
+                    Cliente clientes[] = server.getListaEspera();
+                    server.zeraListaEspera();
+                    new Thread() {
+                        @Override
+                        public void run() {
+                            Jogo game = new Jogo(clientes, 3);
+                            game.defineMaster();
+                            game.iniciaJogo();
+                            game.defineRegras();
+                            game.enviaInstrucoes();
+                            while(true) {
+                                game.pergunta();
+                                game.resposta();
+                                game.tentativa();
+                                if(game.acertou() == 1){
+                                    break;
+                                }
+                                game.defineDaVez();
+                            }
+                        }
+                    }.start();
+                }
             }
             
-            Jogo game = new Jogo(server.getClientes(), server.getQtdeArray());
-            game.defineMaster();
-            
-            // Instancia o ServerSocket ouvindo a porta 12345
-//            ServerSocket servidor = new ServerSocket(1800);
-//            System.out.println("Servidor ouvindo a porta 1800");
-//            while(true) {
-                // o método accept() bloqueia a execução até que
-                // o servidor receba um pedido de conexão
-                // ----------------------conexao cliente e servidor----------------------------
-//                ServerSocket servidor = new ServerSocket(1800);
-//                System.out.println("Servidor ouvindo a porta 1800");
-//                Socket cliente = servidor.accept();
-//                System.out.println("Cliente1 conectado: " + cliente.getInetAddress().getHostAddress());
-//                
-//                // ----------------------conexao cliente e servidor----------------------------
-//                
-//                ObjectInputStream Entrada = new ObjectInputStream(cliente.getInputStream());
-//                
-//                Cliente cli = new Cliente((String)Entrada.readObject(), cliente.getInetAddress().getHostAddress());
-//                
-//                System.out.println(cli.getNome() + cli.getIp());
-//                
-////                ObjectOutputStream Saida = new ObjectOutputStream(cliente.getOutputStream());
-////                Saida.flush();
-////                
-////                Saida.writeObject("Iniciando o game!");
-////                
-////                Saida.close();
-//                
-//                cliente.close();
-////            }  
         } catch(Exception e) {
             System.out.println("Erro: " + e.getMessage());
         }

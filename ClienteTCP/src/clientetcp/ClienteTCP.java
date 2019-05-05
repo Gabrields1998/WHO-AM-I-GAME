@@ -24,31 +24,48 @@ public class ClienteTCP {
               cli.pegaNome();
               cli.iniciaSessao();
               cli.IniciaGame();
-//            Scanner scan = new Scanner(System.in);
-//            System.out.println("Digite seu nome: ");
-//            String nome = scan.nextLine();
-//            Cliente cli = new Cliente(nome, args[0]);
-//            
-//            
-//            System.out.println("IP :" + cli.getIp()); 
-//            cli.setMySocket(new Socket( cli.getIp() ,1800));
-//            
-//            ObjectOutputStream Saida = new ObjectOutputStream(cli.getMySocket().getOutputStream());
-//            Saida.flush();
-//                
-//            Saida.writeObject(cli.getNome());
-//            
-//            Saida.close();
-            
-            
-            
-            while(true);
-//            ObjectInputStream entrada = new ObjectInputStream(cliente.getInputStream());
-//           
-//            String retorno = (String)entrada.readObject();
-//            System.out.println("UHUUUUU:" + retorno.toString());
-//            entrada.close();
-//            System.out.println("Conexão encerrada");
-
+              if(cli.getMaster() == 1) {
+                    cli.dica();
+                    cli.instrucoes();
+                  while (true) {
+                      cli.recebe();
+                      cli.recebe();
+                      cli.resposta();
+                      cli.recebe();
+                      cli.recebe();
+                      cli.acertou();
+                      cli.recebe();
+                      cli.recebeInt();
+                      if(cli.getBreakGame() == 0){
+                          cli.setDaVez();
+                      } else {
+                          System.out.println("Se e o bixao memo doido");
+                          break;
+                      }
+                  }
+              } else {
+                  cli.instrucoes();
+                  while (true) {
+                      cli.recebe();
+                      System.out.println("get a vez: "+ cli.getDaVez());
+                      if(cli.getDaVez() == 1){
+                        cli.pergunta();
+                      }
+                      cli.recebe();
+                      cli.recebe();
+                      if(cli.getDaVez() == 1){
+                        cli.pergunta(); //tentativa
+                      }
+                      cli.recebe();
+                      cli.recebe();
+                      cli.recebeInt();
+                      if(cli.getBreakGame() == 0){
+                          cli.setDaVez();
+                      } else {
+                          System.out.println("Se e o bixao memo doido");
+                          break;
+                      }
+                  }
+              }
     }
 }
