@@ -21,6 +21,7 @@ public class Jogo {
     private int masterDaVez;
     private int jogadorDaVez;
     private int breakGame;
+    private int continuaGame;
     private String dica;
     private String resposta;
 
@@ -29,6 +30,7 @@ public class Jogo {
         this.masterDaVez = 0;
         this.jogadorDaVez = 0;
         this.breakGame = 0;
+        this.continuaGame = 0;
         this.qtdPlayer = qtdPlayers;
     }
     
@@ -68,7 +70,7 @@ public class Jogo {
             this.jogadorDaVez++;
  //---------------------defini jogador da vez--------------------------
         } catch(Exception e) {
-            System.out.println("Erro: " + e.getMessage());
+            System.out.println("Erro -> Jogo defineMaster " + e.getMessage());
         }
         System.out.println("master definido como: " + this.master.getNome());
     }
@@ -96,7 +98,7 @@ public class Jogo {
             this.jogadorDaVez = (this.jogadorDaVez + 1)%3;
  //---------------------defini jogador da vez--------------------------
         } catch(Exception e) {
-            System.out.println("Erro: " + e.getMessage());
+            System.out.println("Erro -> Jogo: defineDavez " + e.getMessage());
         }
     
     }
@@ -118,7 +120,7 @@ public class Jogo {
                       + "Aguardando definição de dica e resposta pelo MESTRE...\n");
             }
         } catch(Exception e) {
-            System.out.println("Erro: " + e.getMessage());
+            System.out.println("Erro -> Jogo: iniciaJogo" + e.getMessage());
         }
     }
     
@@ -138,7 +140,7 @@ public class Jogo {
                       + "JOGADOR perde a vez se fizer pergunta inadequada\n");
             }
         } catch(Exception e) {
-            System.out.println("Erro: " + e.getMessage());
+            System.out.println("Erro -> Jogo: enviaInstrucoes " + e.getMessage());
         }
     }
     
@@ -158,7 +160,7 @@ public class Jogo {
             this.resposta = respostaRecebida;
             System.out.println("resposta recebida e: " + this.resposta + "\n");
         } catch(Exception e) {
-            System.out.println("Erro: " + e.getMessage());
+            System.out.println("Erro -> Jogo: defineRegras" + e.getMessage());
         }
     }
     
@@ -183,7 +185,7 @@ public class Jogo {
                     "[" + this.daVez.getNome() + "]: " + pergunta);
             }
         } catch(Exception e) {
-            System.out.println("Erro: " + e.getMessage());
+            System.out.println("Erro -> Jogo: pergunta" + e.getMessage());
         }
     }
     
@@ -203,7 +205,7 @@ public class Jogo {
                     "[" + this.master.getNome() + "]: " + resposta);
             }
         } catch(Exception e) {
-            System.out.println("Erro: " + e.getMessage());
+            System.out.println("Erro -> Jogo: resposta " + e.getMessage());
         }
     }
     
@@ -225,7 +227,7 @@ public class Jogo {
                     " [" + this.daVez.getNome() + "]: " + tentativa);
             }
         } catch(Exception e) {
-            System.out.println("Erro: " + e.getMessage());
+            System.out.println("Erro -> Jogo: tentativa" + e.getMessage());
         }
     }
     
@@ -269,8 +271,71 @@ public class Jogo {
                 this.players[i].getSaida().writeObject(this.breakGame);
             }
         } catch(Exception e) {
-            System.out.println("Erro: " + e.getMessage());
+            System.out.println("Erro -> Jogo: acertou" + e.getMessage());
         }
         return this.breakGame;
+    }
+    
+    public int continuaGame() {
+        try {
+            this.master.getSaida().flush();
+            this.master.getSaida().writeObject("Quer continuar o jogo?: \n"
+                    + "0: Não \n"
+                    + "1: Sim \n");
+            
+            String respostaRecebida = (String)this.master.getEntrada().readObject();
+            String resposta = respostaRecebida;
+            System.out.println("Continua ou Não continua:" + resposta + "\n");
+            
+            if(resposta.equals("0")) {
+                this.continuaGame = 0;
+                for (int i = 0; i < this.qtdPlayer; i++){
+                    this.players[i].getSaida().flush();
+                    this.players[i].getSaida().writeObject(
+                        "[" + this.master.getNome() + "]: Jogo Encerrado");
+                }
+            } else if(resposta.equals("1")) {
+                this.continuaGame = 1;
+                for (int i = 0; i < this.qtdPlayer; i++){
+                    this.players[i].getSaida().flush();
+                    this.players[i].getSaida().writeObject(
+                        "[" + this.master.getNome() + "]: Acertou, mas vamos continuar jogando");
+                }
+            } else {
+                this.continuaGame = 0;
+                for (int i = 0; i < this.qtdPlayer; i++){
+                    this.players[i].getSaida().flush();
+                    this.players[i].getSaida().writeObject(
+                        "[" + this.master.getNome() + "]: Opcao invalida, jogo encerrado");
+                }
+            }
+            
+            for (int i = 0; i < this.qtdPlayer; i++){
+                this.players[i].getSaida().flush();
+                this.players[i].getSaida().writeObject(this.continuaGame);
+            }
+        } catch(Exception e) {
+            System.out.println("Erro -> Jogo: continuaGame " + e.getMessage());
+        }
+        return this.continuaGame;
+    }
+    
+    public void defineNewMaster(){
+    //---------------------defini master da vez---------------------------
+        this.master = this.players[this.masterDaVez];
+        try {
+            for (int i = 0; i < this.qtdPlayer; i++){
+                this.players[i].getSaida().flush();
+                if(this.players[i] == this.master) {
+                    this.players[i].getSaida().writeObject(1);
+                } else {
+                    this.players[i].getSaida().writeObject(0);
+                }
+            } 
+            this.masterDaVez = (this.masterDaVez + 1)%3;
+ //---------------------defini master da vez---------------------------
+        } catch(Exception e) {
+            System.out.println("Erro -> Jogo: defineNewMaster " + e.getMessage());
+        }
     }
 }

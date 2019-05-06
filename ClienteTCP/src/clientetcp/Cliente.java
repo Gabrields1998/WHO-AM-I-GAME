@@ -18,6 +18,7 @@ public class Cliente {
     private String nome;
     private int master;
     private Integer breakGame;
+    private Integer continuaGame;
     private Socket mySocket;
     private String ip;
     private int Score;
@@ -37,6 +38,21 @@ public class Cliente {
        return this.breakGame; 
     }
     
+    public Integer getContinuaGame() {
+       
+       return this.continuaGame; 
+    }
+    
+    public void setContinuaGame() {
+        try{
+            int continuaGame = (int)entrada.readObject();
+            this.continuaGame = continuaGame;
+        } catch(Exception e) {
+            System.out.println("Erro -> setContinuaGame" + e.getMessage());
+        }
+        
+    }
+    
     public int getDaVez() {
        return this.daVez; 
     }
@@ -45,11 +61,28 @@ public class Cliente {
         try{
             int daVez = (int)entrada.readObject();
             this.daVez = daVez;
+            if(daVez == 1) {
+                System.out.println("eu sou o cara da vez fodao pika do caralho \n");
+            }
         } catch(Exception e) {
-            System.out.println("Deu erro aqui: " + e.getMessage());
+            System.out.println("Erro -> setDaVez" + e.getMessage());
         }
         
     }
+     
+    public void setMaster() {
+        try{
+            int Master = (int)entrada.readObject();
+            this.master = Master;
+            if(Master == 1) {
+                System.out.println("eu sou master fodao pika do caralho \n");
+            }
+        } catch(Exception e) {
+            System.out.println("Erro -> setMaster: " + e.getMessage());
+        }
+        
+    }
+    
     public void setNome(String nome) {
         this.nome = nome;
     }
@@ -127,7 +160,7 @@ public class Cliente {
             System.out.println(retorno.toString());
             
         } catch(Exception e) {
-            System.out.println("Deu erro aqui: " + e.getMessage());
+            System.out.println("Erro -> iniciaSessao" + e.getMessage());
         }
     }
     
@@ -143,7 +176,7 @@ public class Cliente {
             String iniciaGame = (String)entrada.readObject();
             System.out.println(iniciaGame.toString());
         } catch(Exception e) {
-            System.out.println("Erro: " + e.getMessage());
+            System.out.println("Erro -> Iniciagame " + e.getMessage());
         }
     }
     
@@ -152,7 +185,7 @@ public class Cliente {
             String instrucoes = (String)entrada.readObject();
             System.out.println(instrucoes.toString());
         } catch(Exception e) {
-            System.out.println("Erro: " + e.getMessage());
+            System.out.println("Erro -> passa as instrucoes " + e.getMessage());
         }
     }
     
@@ -176,7 +209,7 @@ public class Cliente {
             System.out.println("\n");
 // -----------------Recebe resposta do servidor----------------------
         } catch(Exception e) {
-            System.out.println("Erro: " + e.getMessage());
+            System.out.println("Erro -> dica " + e.getMessage());
         }
     }
     
@@ -185,16 +218,16 @@ public class Cliente {
             String jogadorDaVez = (String)entrada.readObject();
             System.out.println(jogadorDaVez.toString());
         } catch(Exception e) {
-            System.out.println("Erro: " + e.getMessage());
+            System.out.println("Erro -> recebe" + e.getMessage());
         }
     }
     
     public void recebeInt() {
-         try {
+        try {
             this.breakGame = (Integer)entrada.readObject();
             System.out.println(this.breakGame.toString());
         } catch(Exception e) {
-            System.out.println("Erro Int: " + e.getMessage());
+            System.out.println("Erro recebeInt: " + e.getMessage());
         }
     }
     
@@ -209,7 +242,7 @@ public class Cliente {
             System.out.println("\n");
 // -----------------Recebe pergunta do servidor--------------------------
         } catch(Exception e) {
-            System.out.println("Erro: " + e.getMessage());
+            System.out.println("Erro -> pergunta" + e.getMessage());
         }
     }
     
@@ -222,7 +255,7 @@ public class Cliente {
             this.getSaida().writeObject(scanResposta.nextLine());
             System.out.println("\n");
         } catch(Exception e) {
-            System.out.println("Erro: " + e.getMessage());
+            System.out.println("Erro -> resposta" + e.getMessage());
         }
     }
     
@@ -240,8 +273,27 @@ public class Cliente {
 
 // -----------------Recebe pergunta do servidor--------------------------
         } catch(Exception e) {
-            System.out.println("Erro: " + e.getMessage());
+            System.out.println("Erro -> acertou" + e.getMessage());
         }
         return resposta;
+    }
+    
+    public void continuaGame() {
+        try {
+// -----------------Recebe pergunta do servidor--------------------------
+            Integer resposta = 0;
+            String recebePergunta = (String)entrada.readObject();
+            Scanner scanPergunta = new Scanner(System.in);
+            System.out.println(recebePergunta.toString());
+            this.getSaida().flush();
+            resposta = scanPergunta.nextInt();
+            this.continuaGame = resposta;
+            this.getSaida().writeObject(resposta.toString());
+            System.out.println("\n");
+
+// -----------------Recebe pergunta do servidor--------------------------
+        } catch(Exception e) {
+            System.out.println("Erro -> continuaGame" + e.getMessage());
+        }
     }
 }

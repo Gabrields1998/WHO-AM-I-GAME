@@ -45,16 +45,26 @@ public class ServidorTCP {
                             Jogo game = new Jogo(clientes, 3);
                             game.defineMaster();
                             game.iniciaJogo();
-                            game.defineRegras();
-                            game.enviaInstrucoes();
-                            while(true) {
-                                game.pergunta();
-                                game.resposta();
-                                game.tentativa();
-                                if(game.acertou() == 1){
-                                    break;
+                            int continua = 1;
+                            while(continua == 1){
+                                game.defineRegras();
+                                game.enviaInstrucoes();
+                                while(true) {
+                                    game.pergunta();
+                                    game.resposta();
+                                    game.tentativa();
+                                    int acertou = game.acertou();
+                                    game.defineDaVez();
+                                    if( acertou == 1){
+                                        if(game.continuaGame() == 1) {
+                                           game.defineNewMaster();
+                                           break;
+                                        }else{
+                                            continua = 0;
+                                            break;
+                                        }
+                                    }
                                 }
-                                game.defineDaVez();
                             }
                         }
                     }.start();
@@ -62,7 +72,7 @@ public class ServidorTCP {
             }
             
         } catch(Exception e) {
-            System.out.println("Erro: " + e.getMessage());
+            System.out.println("Erro -> ServidorTCP: main " + e.getMessage());
         }
         finally {
         

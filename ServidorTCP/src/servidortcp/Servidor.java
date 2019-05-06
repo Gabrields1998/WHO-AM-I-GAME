@@ -64,7 +64,7 @@ public class Servidor{
             System.out.println("Servidor ouvindo a porta 1800");
             
         } catch(Exception e) {
-            System.out.println("Erro: " + e.getMessage());
+            System.out.println(" Erro -> Servidor: LigaServidor " + e.getMessage());
         }
     }
     public void apresentaPlayers(Cliente cliente) {
@@ -78,7 +78,7 @@ public class Servidor{
                                 + "Atualmente ha: " + this.qtdeListaEspera + "conectados\n"
                                 + "Seu jogo ira iniciar quando houver 3 ou mais players!!! Aguarde.\n");
         } catch(Exception e) {
-            System.out.println("Erro: " + e.getMessage());
+            System.out.println("Erro -> Servidor: apresentaPlayers " + e.getMessage());
         }
         
     }
@@ -103,7 +103,7 @@ public class Servidor{
             this.apresentaPlayers(cli);
             
         } catch(Exception e) {
-            System.out.println("Erro: " + e.getMessage());
+            System.out.println("Erro -> Servidor: connectPlayer " + e.getMessage());
         }
         
     }

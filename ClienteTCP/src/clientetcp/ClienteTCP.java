@@ -21,51 +21,79 @@ public class ClienteTCP {
      */
     public static void main(String[] args) {   
         Cliente cli = new Cliente(args[0]);
-              cli.pegaNome();
-              cli.iniciaSessao();
-              cli.IniciaGame();
-              if(cli.getMaster() == 1) {
-                    cli.dica();
-                    cli.instrucoes();
-                  while (true) {
-                      cli.recebe();
-                      cli.recebe();
-                      cli.resposta();
-                      cli.recebe();
-                      cli.recebe();
-                      cli.acertou();
-                      cli.recebe();
-                      cli.recebeInt();
-                      if(cli.getBreakGame() == 0){
-                          cli.setDaVez();
-                      } else {
-                          System.out.println("Se e o bixao memo doido");
-                          break;
-                      }
-                  }
-              } else {
-                  cli.instrucoes();
-                  while (true) {
-                      cli.recebe();
-                      System.out.println("get a vez: "+ cli.getDaVez());
-                      if(cli.getDaVez() == 1){
-                        cli.pergunta();
-                      }
-                      cli.recebe();
-                      cli.recebe();
-                      if(cli.getDaVez() == 1){
-                        cli.pergunta(); //tentativa
-                      }
-                      cli.recebe();
-                      cli.recebe();
-                      cli.recebeInt();
-                      if(cli.getBreakGame() == 0){
-                          cli.setDaVez();
-                      } else {
-                          System.out.println("Se e o bixao memo doido");
-                          break;
-                      }
-                  }
-              }
+        cli.pegaNome();
+        cli.iniciaSessao();
+        cli.IniciaGame();
+        int continua = 1;
+        while(continua == 1) {
+            System.out.println("Voltei aqui com exito \n\n\n");
+            if(cli.getMaster() == 1) {
+                cli.dica();
+                cli.instrucoes();
+              while (true) {
+                cli.recebe();
+                cli.recebe();
+                cli.resposta();
+                cli.recebe();
+                cli.recebe();
+                cli.acertou();
+                cli.recebe();
+                cli.recebeInt();
+                if(cli.getBreakGame() == 0){
+                    cli.setDaVez();
+                } else {
+                    cli.setDaVez();
+                    System.out.println("Acertou");
+                    cli.continuaGame();
+                    cli.recebe();
+                    cli.setContinuaGame();
+                    if( cli.getContinuaGame() == 1){
+//                        cli.recebe();
+                        cli.setMaster();
+//                        cli.recebeInt();
+                        break;
+                    } else {
+                        continua = 0;
+                        break;
+                    }
+                }
+            }
+          } else {
+            cli.instrucoes();
+            while (true) {
+                cli.recebe();
+                System.out.println("get a vez: "+ cli.getDaVez());
+                if(cli.getDaVez() == 1){
+                  cli.pergunta();
+                }
+                cli.recebe();
+                cli.recebe();
+                if(cli.getDaVez() == 1){
+                  cli.pergunta(); //tentativa
+                }
+                cli.recebe();
+                cli.recebe();
+                cli.recebeInt();
+                if(cli.getBreakGame() == 0){
+                    cli.setDaVez();
+                } else {
+                    cli.setDaVez();
+                    System.out.println("Acertou");
+                    cli.recebe();
+                    cli.setContinuaGame();
+                    if(cli.getContinuaGame() == 1){
+//                        cli.recebe();
+                        cli.setMaster();
+//                        cli.recebeInt();
+                        break;
+                    } else {
+                        continua = 0;
+                        break;
+                    }
+                }
+            }
+          }
+        }
+
     }
 }
