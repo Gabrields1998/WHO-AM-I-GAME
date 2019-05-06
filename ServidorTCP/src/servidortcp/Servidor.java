@@ -67,12 +67,14 @@ public class Servidor{
             System.out.println(" Erro -> Servidor: LigaServidor " + e.getMessage());
         }
     }
+    
     public void apresentaPlayers(Cliente cliente) {
         try {
                 cliente.setSaida(new ObjectOutputStream(cliente.getMySocket().getOutputStream()));
                 cliente.getSaida().flush();
                 
-                cliente.getSaida().writeObject("-------------------------------------------------\n"
+                cliente.getSaida().writeObject(
+                                  "-------------------------------------------------\n"
                                 + "------------BEM VINDO AO (WHO-I-AM?)-------------\n"
                                 + "-------------------------------------------------\n"
                                 + "Atualmente ha: " + this.qtdeListaEspera + "conectados\n"

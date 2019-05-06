@@ -92,6 +92,7 @@ public class Cliente {
         System.out.println("Digite seu nome: ");
         this.nome = scan.nextLine();
     }
+    
     public void setId(int id) {
         this.id = id;
     }

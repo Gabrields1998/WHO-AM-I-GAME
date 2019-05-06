@@ -49,7 +49,7 @@ public class Jogo {
             }
  //---------------------defini master da vez---------------------------
  
- //---------------------defini jogador da vez--------------------------           
+ //---------------------define jogador da vez--------------------------           
             for (int i = 0; i < this.qtdPlayer; i++){
                 this.players[i].getSaida().flush();
                 if(this.players[i] == this.master) {
@@ -68,7 +68,7 @@ public class Jogo {
                 }   
             }
             this.jogadorDaVez++;
- //---------------------defini jogador da vez--------------------------
+ //---------------------define jogador da vez--------------------------
         } catch(Exception e) {
             System.out.println("Erro -> Jogo defineMaster " + e.getMessage());
         }
@@ -77,7 +77,7 @@ public class Jogo {
     
     public void defineDaVez() {
         try{
-//---------------------defini jogador da vez--------------------------           
+//---------------------define jogador da vez--------------------------           
             for (int i = 0; i < this.qtdPlayer; i++){
                 this.players[i].getSaida().flush();
                 if(this.players[i] == this.master) {
@@ -96,12 +96,13 @@ public class Jogo {
                 }   
             }
             this.jogadorDaVez = (this.jogadorDaVez + 1)%3;
- //---------------------defini jogador da vez--------------------------
+ //---------------------define jogador da vez--------------------------
         } catch(Exception e) {
             System.out.println("Erro -> Jogo: defineDavez " + e.getMessage());
         }
     
     }
+    
     public void iniciaJogo(){
         try {
             String listaNome = "";
@@ -117,7 +118,7 @@ public class Jogo {
                       + "Jogadores conectados atualmente: " + this.qtdPlayer +"\n"
                       + listaNome + "\n"
                       + "MESTRE da rodada: [" + this.master.getNome() + "]\n"
-                      + "Aguardando definição de dica e resposta pelo MESTRE...\n");
+                      + "Aguardando definição de dica e resposta pelo MESTRE...\n ");
             }
         } catch(Exception e) {
             System.out.println("Erro -> Jogo: iniciaJogo" + e.getMessage());
@@ -147,18 +148,25 @@ public class Jogo {
     public void defineRegras() {
         try {
             this.master.getSaida().flush();
-            this.master.getSaida().writeObject("Informe a dica: ");
+            this.master.getSaida().writeObject(
+                "-------------------------------------------------\n" +  
+                "MESTRE Informe a dica: "
+            );
             
             String dicaRecebida = (String)this.master.getEntrada().readObject();
             this.dica = dicaRecebida;
             System.out.println("dica recebida e: " + this.dica + "\n");
             
             this.master.getSaida().flush();
-            this.master.getSaida().writeObject("Informe a resposta: ");
+            this.master.getSaida().writeObject(
+                "-------------------------------------------------\n" +
+                "Informe a resposta: ");
             
             String respostaRecebida = (String)this.master.getEntrada().readObject();
             this.resposta = respostaRecebida;
-            System.out.println("resposta recebida e: " + this.resposta + "\n");
+            System.out.println(
+                "-------------------------------------------------\n" +
+                 "Resposta recebida e: " + this.resposta + "\n");
         } catch(Exception e) {
             System.out.println("Erro -> Jogo: defineRegras" + e.getMessage());
         }
@@ -173,7 +181,10 @@ public class Jogo {
             }
             
             this.daVez.getSaida().flush();
-            this.daVez.getSaida().writeObject("Informe sua pergunta: ");
+            this.daVez.getSaida().writeObject(
+                      "-------------------------------------------------\n"
+                    + "-------------------------------------------------\n"
+                    + "Informe sua pergunta: ");
             
             String perguntaRecebida = (String)this.daVez.getEntrada().readObject();
             String pergunta = perguntaRecebida;
@@ -193,7 +204,10 @@ public class Jogo {
         try {
 
             this.master.getSaida().flush();
-            this.master.getSaida().writeObject("Acertou a resposta?: ");
+            this.master.getSaida().writeObject(
+                "-------------------------------------------------\n" +
+                "-------------------------------------------------\n" +
+                "Acertou a resposta?: ");
             
             String respostaRecebida = (String)this.master.getEntrada().readObject();
             String resposta = respostaRecebida;
@@ -212,18 +226,18 @@ public class Jogo {
     public void tentativa() {
         try {
             this.daVez.getSaida().flush();
-            this.daVez.getSaida().writeObject("Informe sua tentativa: ");
-            System.out.println("chegou aqui");
+            this.daVez.getSaida().writeObject(
+                      "-------------------------------------------------\n"
+                    + "-------------------------------------------------\n"
+                    + "Informe sua tentativa: ");
             String tentativaRecebida = (String)this.daVez.getEntrada().readObject();
-            System.out.println("chegou aqui2");
             String tentativa = tentativaRecebida;
-            System.out.println("chegou aqui3");
             System.out.println("tentativa recebida: " + tentativa + "\n");
             
             for (int i = 0; i < this.qtdPlayer; i++){
                 this.players[i].getSaida().flush();
                 this.players[i].getSaida().writeObject(
-                     "TENTATIVA -" +
+                     "\nTENTATIVA -" +
                     " [" + this.daVez.getNome() + "]: " + tentativa);
             }
         } catch(Exception e) {
@@ -235,7 +249,7 @@ public class Jogo {
          try {
 
             this.master.getSaida().flush();
-            this.master.getSaida().writeObject("Acertou?: \n"
+            this.master.getSaida().writeObject("\n Acertou?: \n"
                     + "0: Errado \n"
                     + "1: Correto \n");
             

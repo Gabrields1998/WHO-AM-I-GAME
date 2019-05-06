@@ -26,10 +26,10 @@ public class ClienteTCP {
         cli.IniciaGame();
         int continua = 1;
         while(continua == 1) {
-            System.out.println("Voltei aqui com exito \n\n\n");
             if(cli.getMaster() == 1) {
                 cli.dica();
                 cli.instrucoes();
+                System.out.println("\nAguardando Resposta...");
               while (true) {
                 cli.recebe();
                 cli.recebe();
@@ -62,14 +62,19 @@ public class ClienteTCP {
             cli.instrucoes();
             while (true) {
                 cli.recebe();
-                System.out.println("get a vez: "+ cli.getDaVez());
                 if(cli.getDaVez() == 1){
                   cli.pergunta();
+                } else {
+                    System.out.println("\nAguardando Resposta...");
                 }
                 cli.recebe();
                 cli.recebe();
+                
                 if(cli.getDaVez() == 1){
                   cli.pergunta(); //tentativa
+                }else {
+                    System.out.println("a"
+                            + "\nAguardando Tentativa...");
                 }
                 cli.recebe();
                 cli.recebe();
