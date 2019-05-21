@@ -10,7 +10,7 @@ import java.util.*;
 
 /**
  *
- * @author gabriel
+ * @author gabriel && Santana
  */
 public class Cliente {
     private int id;
@@ -62,7 +62,9 @@ public class Cliente {
             int daVez = (int)entrada.readObject();
             this.daVez = daVez;
             if(daVez == 1) {
-                System.out.println("eu sou o cara da vez fodao pika do caralho \n");
+                System.out.println(
+                          "Você é o cara da vez \n" 
+                        + "Aguarde a confirmação do Master de que o jogo vai continuar ou não" );
             }
         } catch(Exception e) {
             System.out.println("Erro -> setDaVez" + e.getMessage());
@@ -75,7 +77,7 @@ public class Cliente {
             int Master = (int)entrada.readObject();
             this.master = Master;
             if(Master == 1) {
-                System.out.println("eu sou master fodao pika do caralho \n");
+                System.out.println("eu sou master \n");
             }
         } catch(Exception e) {
             System.out.println("Erro -> setMaster: " + e.getMessage());

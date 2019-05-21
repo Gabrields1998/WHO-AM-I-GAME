@@ -11,7 +11,7 @@ import java.io.ObjectOutputStream;
 
 /**
  *
- * @author gabriel
+ * @author gabriel && Santana
  */
 public class Jogo {
     private Cliente master;
@@ -41,12 +41,22 @@ public class Jogo {
         try {
             for (int i = 0; i < this.qtdPlayer; i++){
                 this.players[i].getSaida().flush();
-                if(this.players[i] == this.master) {
+                if(this.players[i] == this.master && this.master != this.daVez ) {
                     this.players[i].getSaida().writeObject(1);
+                } else if(this.master == this.daVez){
+                    i = (i+1)%3;
                 } else {
                     this.players[i].getSaida().writeObject(0);
                 }
             }
+//            for (int i = 0; i < this.qtdPlayer; i++){
+//                this.players[i].getSaida().flush();
+//                if(this.players[i] == this.master ) {
+//                    this.players[i].getSaida().writeObject(1);
+//                } else {
+//                    this.players[i].getSaida().writeObject(0);
+//                }
+//            }
  //---------------------defini master da vez---------------------------
  
  //---------------------define jogador da vez--------------------------           
@@ -54,7 +64,7 @@ public class Jogo {
                 this.players[i].getSaida().flush();
                 if(this.players[i] == this.master) {
                     if(this.players[i] == this.players[this.jogadorDaVez]){
-                        this.jogadorDaVez++;
+                        this.jogadorDaVez = (this.jogadorDaVez + 1)%3;
                     }
                     this.players[i].getSaida().writeObject(0);
                 } else {
@@ -67,7 +77,8 @@ public class Jogo {
                     
                 }   
             }
-            this.jogadorDaVez++;
+            this.jogadorDaVez = (this.jogadorDaVez + 1)%3;
+//            this.jogadorDaVez++;
  //---------------------define jogador da vez--------------------------
         } catch(Exception e) {
             System.out.println("Erro -> Jogo defineMaster " + e.getMessage());
@@ -78,22 +89,40 @@ public class Jogo {
     public void defineDaVez() {
         try{
 //---------------------define jogador da vez--------------------------           
-            for (int i = 0; i < this.qtdPlayer; i++){
-                this.players[i].getSaida().flush();
-                if(this.players[i] == this.master) {
-                    if(this.players[i] == this.players[this.jogadorDaVez]){
-                        this.jogadorDaVez++;
-                    }
-                    this.players[i].getSaida().writeObject(0);
+//            for (int i = 0; i < this.qtdPlayer; i++){
+//                this.players[i].getSaida().flush();
+//                if(this.players[i] == this.master) {
+//                    if(this.players[i] == this.players[this.jogadorDaVez]){
+//                        this.jogadorDaVez = (this.jogadorDaVez + 1)%3;
+//                    }
+//                    this.players[i].getSaida().writeObject(0);
+//                } else {
+//                    if(this.players[i] == this.players[this.jogadorDaVez]) {
+//                        this.players[i].getSaida().writeObject(1);
+//                        this.daVez = this.players[i];
+//                    } else {
+//                        this.players[i].getSaida().writeObject(0);
+//                    }
+//                    
+//                }   
+//            }
+            int i = this.jogadorDaVez;
+            while( i < this.qtdPlayer ){
+                if(this.players[i] == this.master){
+                    i = (i + 1)%3;
                 } else {
-                    if(this.players[i] == this.players[this.jogadorDaVez]) {
-                        this.players[i].getSaida().writeObject(1);
-                        this.daVez = this.players[i];
-                    } else {
-                        this.players[i].getSaida().writeObject(0);
-                    }
-                    
-                }   
+                    this.players[i].getSaida().flush();
+                    this.players[i].getSaida().writeObject(1);
+                    this.jogadorDaVez = i;
+                    this.daVez = this.players[this.jogadorDaVez];
+                    break;
+                }
+            }
+            for(int j = 0; j < this.qtdPlayer; j++){
+                if(j != this.jogadorDaVez){
+                    this.players[j].getSaida().flush();
+                    this.players[j].getSaida().writeObject(0);
+                }
             }
             this.jogadorDaVez = (this.jogadorDaVez + 1)%3;
  //---------------------define jogador da vez--------------------------
@@ -182,8 +211,7 @@ public class Jogo {
             
             this.daVez.getSaida().flush();
             this.daVez.getSaida().writeObject(
-                      "-------------------------------------------------\n"
-                    + "-------------------------------------------------\n"
+                      "[" + this.daVez.getNome() + "] "
                     + "Informe sua pergunta: ");
             
             String perguntaRecebida = (String)this.daVez.getEntrada().readObject();
@@ -204,10 +232,7 @@ public class Jogo {
         try {
 
             this.master.getSaida().flush();
-            this.master.getSaida().writeObject(
-                "-------------------------------------------------\n" +
-                "-------------------------------------------------\n" +
-                "Acertou a resposta?: ");
+            this.master.getSaida().writeObject("Acertou a resposta?:");
             
             String respostaRecebida = (String)this.master.getEntrada().readObject();
             String resposta = respostaRecebida;
@@ -226,10 +251,7 @@ public class Jogo {
     public void tentativa() {
         try {
             this.daVez.getSaida().flush();
-            this.daVez.getSaida().writeObject(
-                      "-------------------------------------------------\n"
-                    + "-------------------------------------------------\n"
-                    + "Informe sua tentativa: ");
+            this.daVez.getSaida().writeObject("Informe sua tentativa: \n");
             String tentativaRecebida = (String)this.daVez.getEntrada().readObject();
             String tentativa = tentativaRecebida;
             System.out.println("tentativa recebida: " + tentativa + "\n");
@@ -237,7 +259,7 @@ public class Jogo {
             for (int i = 0; i < this.qtdPlayer; i++){
                 this.players[i].getSaida().flush();
                 this.players[i].getSaida().writeObject(
-                     "\nTENTATIVA -" +
+                     "TENTATIVA -" +
                     " [" + this.daVez.getNome() + "]: " + tentativa);
             }
         } catch(Exception e) {
@@ -249,7 +271,7 @@ public class Jogo {
          try {
 
             this.master.getSaida().flush();
-            this.master.getSaida().writeObject("\n Acertou?: \n"
+            this.master.getSaida().writeObject("\nAcertou?: \n"
                     + "0: Errado \n"
                     + "1: Correto \n");
             
@@ -336,16 +358,48 @@ public class Jogo {
     
     public void defineNewMaster(){
     //---------------------defini master da vez---------------------------
-        this.master = this.players[this.masterDaVez];
+        int breaker = 0;
         try {
-            for (int i = 0; i < this.qtdPlayer; i++){
-                this.players[i].getSaida().flush();
-                if(this.players[i] == this.master) {
-                    this.players[i].getSaida().writeObject(1);
+//            for (int i = 0; i < this.qtdPlayer; i++){
+//                this.players[i].getSaida().flush();
+//                if(this.players[i] == this.players[this.masterDaVez] && breaker == 0) {
+//                    if(this.players[i] != this.daVez){
+//                        this.master = this.players[this.masterDaVez];
+//                        this.players[i].getSaida().writeObject(1);
+//                    } else {
+//                        this.players[i].getSaida().writeObject(0);
+//                        this.masterDaVez = (this.masterDaVez + 1)%3;
+//                        this.master = this.players[this.masterDaVez];
+//                        this.master.getSaida().writeObject(1);
+//                        breaker = 1;
+//                    }
+//                } else {
+//                    if(breaker == 1){
+//                        breaker = 2;
+//                    }
+//                    else if(breaker == 0 || breaker == 2){
+//                        this.players[i].getSaida().writeObject(0);
+//                    }
+//                }
+//            }
+            int i = this.masterDaVez;
+            while( i < this.qtdPlayer ){
+                if(this.players[i] == this.daVez){
+                    i = (i + 1)%3;
                 } else {
-                    this.players[i].getSaida().writeObject(0);
+                    this.players[i].getSaida().flush();
+                    this.players[i].getSaida().writeObject(1);
+                    this.masterDaVez = i;
+                    this.master = this.players[this.masterDaVez];
+                    break;
                 }
-            } 
+            }
+            for(int j = 0; j < this.qtdPlayer; j++){
+                if(j != this.masterDaVez){
+                    this.players[j].getSaida().flush();
+                    this.players[j].getSaida().writeObject(0);
+                }
+            }
             this.masterDaVez = (this.masterDaVez + 1)%3;
  //---------------------defini master da vez---------------------------
         } catch(Exception e) {

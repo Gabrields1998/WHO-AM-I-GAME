@@ -14,7 +14,7 @@ import java.lang.Thread;
 
 /**
  *
- * @author gabriel
+ * @author gabriel && Santana
  */
 public class ServidorTCP {
 

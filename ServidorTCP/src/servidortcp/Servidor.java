@@ -12,7 +12,7 @@ import javax.swing.*;
 
 /**
  *
- * @author gabriel
+ * @author gabriel && Santana
  */
 public class Servidor{
     private Cliente clientes[] = new Cliente[100];
