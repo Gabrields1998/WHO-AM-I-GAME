@@ -19,7 +19,8 @@ public class ClienteTCP {
     /**
      * @param args the command line arguments
      */
-    public static void main(String[] args) {   
+    public static void main(String[] args) throws IOException {
+        String path = "../ServidorTCP/registros.txt";
         Cliente cli = new Cliente(args[0]);
         cli.pegaNome();
         cli.iniciaSessao();
@@ -98,6 +99,7 @@ public class ClienteTCP {
                 }
             }
           }
+          cli.leitor(path);
         }
 
     }

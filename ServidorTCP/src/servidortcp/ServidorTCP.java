@@ -11,6 +11,8 @@ import java.io.*;
 import java.util.*;
 import javax.swing.*;
 import java.lang.Thread;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 
 /**
  *
@@ -22,6 +24,7 @@ public class ServidorTCP {
      * @param args the command line arguments
      */
     public static void main(String[] args) {
+        String path = "registros.txt";
         try {
             Servidor server = new Servidor();
             server.LigaServidor();
@@ -43,6 +46,12 @@ public class ServidorTCP {
                         @Override
                         public void run() {
                             Jogo game = new Jogo(clientes, 3);
+                            try {
+                                game.setScore();
+                                game.leitor(path);
+                            } catch (IOException ex) {
+                                Logger.getLogger(ServidorTCP.class.getName()).log(Level.SEVERE, null, ex);
+                            }
                             game.defineMaster();
                             game.iniciaJogo();
                             int continua = 1;
@@ -56,7 +65,15 @@ public class ServidorTCP {
                                     int acertou = game.acertou();
                                     game.defineDaVez();
                                     if( acertou == 1){
+                                        Integer score = game.getScore();
+                                        try{
+                                            game.arrumaArquivo();
+                                            game.escritor(path);
+                                        } catch (IOException ex) {
+                                            Logger.getLogger(ServidorTCP.class.getName()).log(Level.SEVERE, null, ex);
+                                        }
                                         if(game.continuaGame() == 1) {
+                                           
                                            game.defineNewMaster();
                                            break;
                                         }else{

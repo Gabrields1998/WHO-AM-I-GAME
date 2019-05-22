@@ -30,6 +30,30 @@ public class Cliente {
         
     }
     
+    public void leitor(String path) throws IOException {
+        try{
+            System.out.println("--------------------------------");
+            System.out.println("---------------SCORE------------");
+            System.out.println("--------------------------------");
+            BufferedReader buffRead = new BufferedReader(new FileReader(path));
+            String linha = "";
+            while (true) {
+                if (linha != null) {
+                    System.out.println(linha);
+
+                } else
+                    break;
+                linha = buffRead.readLine();
+            }
+            buffRead.close();
+            System.out.println("--------------------------------");
+            System.out.println("---------------SCORE------------");
+            System.out.println("--------------------------------");
+        } catch(IOException e){
+            System.out.println("Erro -> Leitor: " + e.getMessage());
+        }
+    }
+    
     public int getMaster() {
         return this.master;
     }

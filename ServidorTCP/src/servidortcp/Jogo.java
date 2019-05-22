@@ -8,11 +8,19 @@ package servidortcp;
 import clientetcp.*;
 import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
+// imports para arquivos 
+import java.io.BufferedReader;
+import java.io.BufferedWriter;
+import java.io.FileReader;
+import java.io.FileWriter;
+import java.io.IOException;
+import java.util.Scanner;
 
 /**
  *
  * @author gabriel && Santana
  */
+
 public class Jogo {
     private Cliente master;
     private Cliente daVez;
@@ -22,16 +30,141 @@ public class Jogo {
     private int jogadorDaVez;
     private int breakGame;
     private int continuaGame;
+    private Integer score;
+    private BufferArquivo bufferArq[] = new BufferArquivo[10];
     private String dica;
     private String resposta;
+    private String ganhador;
+    
+    private class BufferArquivo {
+        private String nome;
+        private Integer score;
 
+        public BufferArquivo() {
+            this.score = 0;
+        }
+        
+       
+        public String getNome() {
+            return nome;
+        }
+
+        public Integer getScore() {
+            return score;
+        }
+
+        public void setNome(String nome) {
+            this.nome = nome;
+        }
+
+        public void setScore(Integer score) {
+            this.score = score;
+        }
+        
+            
+    }
+    
     public Jogo(Cliente[] players, int qtdPlayers) {
         this.players = players;
         this.masterDaVez = 0;
         this.jogadorDaVez = 0;
         this.breakGame = 0;
         this.continuaGame = 0;
+        this.score = 1000;
         this.qtdPlayer = qtdPlayers;
+        for (int i = 0; i < 10; i++){
+                this.bufferArq[i] = new BufferArquivo();
+            }
+    }
+    
+    public Integer getScore() {
+        return this.score;
+    }
+    
+    public void setScore() {
+        this.score = 1000;
+    }
+    
+    public void leitor(String path) throws IOException {
+        try{
+            BufferedReader buffRead = new BufferedReader(new FileReader(path));
+            String linha = "";
+            String parcialBuffer[];
+            int i = 0;
+            
+            System.out.println("classe criada: " + this.bufferArq[0].getScore());
+            while (i < 10) {
+                linha = buffRead.readLine();
+                
+                if (linha != null) {
+                    parcialBuffer = linha.split(" ");
+                    System.out.println("parcialBuffer: " + parcialBuffer[0]);
+                    this.bufferArq[i].setNome(parcialBuffer[0]);
+                    System.out.println("parcialBuffer" + Integer.parseInt(parcialBuffer[1]));
+                    this.bufferArq[i].setScore(Integer.parseInt(parcialBuffer[1]));
+                }
+                i++;
+            }
+            buffRead.close();
+            this.bubbleSort(this.bufferArq);
+        } catch(IOException e){
+            System.out.println("Erro -> Leitor: " + e.getMessage());
+        }
+    }
+   
+    public void escritor(String path) throws IOException {
+        try{
+            BufferedWriter buffWrite = new BufferedWriter(new FileWriter(path));
+            Integer linha = 0;
+            linha = this.score;
+            for (int i = 0; i < 10; i++){
+                buffWrite.append(this.bufferArq[i].getNome() + " " + this.bufferArq[i].getScore() +"\n");
+            }
+            
+            buffWrite.close();
+            
+        }catch(IOException e){
+            System.out.println("Erro -> Escritor: " + e.getMessage());
+        }
+    }
+    
+    public void arrumaArquivo() {
+        BufferArquivo novoBuffer = new BufferArquivo();
+        novoBuffer.setNome(this.ganhador + ":");
+        novoBuffer.setScore(this.score);
+        BufferArquivo bufferAux[] = new BufferArquivo[11];
+        for (int i = 0; i < 10; i++) {
+                bufferAux[i] = this.bufferArq[i];
+        }
+       
+        bufferAux[10] = novoBuffer;
+        
+        this.bubbleSort(bufferAux);
+        
+        for (int i = 0; i < 10; i++) {
+                this.bufferArq[i] = bufferAux[i];
+        }
+        
+        for (int i = 0; i < bufferArq.length; i++) {
+            System.out.println("nome: " + bufferArq[i].getNome());
+        }
+        
+    }
+    
+    private void bubbleSort(BufferArquivo vetor[]){
+        boolean troca = true;
+        BufferArquivo aux;
+        while (troca) {
+            troca = false;
+            for (int i = 0; i < vetor.length - 1; i++) {
+                if (vetor[i].getScore() < vetor[i + 1].getScore()) {
+                    aux = vetor[i];
+                    vetor[i] = vetor[i + 1];
+                    vetor[i + 1]= aux;
+                    troca = true;
+                }
+            }
+        }
     }
     
     public void defineMaster() {
@@ -88,24 +221,8 @@ public class Jogo {
     
     public void defineDaVez() {
         try{
-//---------------------define jogador da vez--------------------------           
-//            for (int i = 0; i < this.qtdPlayer; i++){
-//                this.players[i].getSaida().flush();
-//                if(this.players[i] == this.master) {
-//                    if(this.players[i] == this.players[this.jogadorDaVez]){
-//                        this.jogadorDaVez = (this.jogadorDaVez + 1)%3;
-//                    }
-//                    this.players[i].getSaida().writeObject(0);
-//                } else {
-//                    if(this.players[i] == this.players[this.jogadorDaVez]) {
-//                        this.players[i].getSaida().writeObject(1);
-//                        this.daVez = this.players[i];
-//                    } else {
-//                        this.players[i].getSaida().writeObject(0);
-//                    }
-//                    
-//                }   
-//            }
+//---------------------define jogador da vez-------------------------- 
+            this.ganhador = this.daVez.getNome();
             int i = this.jogadorDaVez;
             while( i < this.qtdPlayer ){
                 if(this.players[i] == this.master){
@@ -286,6 +403,8 @@ public class Jogo {
                     this.players[i].getSaida().writeObject(
                         "[" + this.master.getNome() + "]: Errado");
                 }
+                this.score -= 10;
+                System.out.println("Score atual: " + this.score);
             } else if(resposta.equals("1")) {
                 this.breakGame = 1;
                 for (int i = 0; i < this.qtdPlayer; i++){
@@ -293,6 +412,7 @@ public class Jogo {
                     this.players[i].getSaida().writeObject(
                         "[" + this.master.getNome() + "]: Correto");
                 }
+                
             } else {
                 this.breakGame = 0;
                 for (int i = 0; i < this.qtdPlayer; i++){
@@ -360,28 +480,6 @@ public class Jogo {
     //---------------------defini master da vez---------------------------
         int breaker = 0;
         try {
-//            for (int i = 0; i < this.qtdPlayer; i++){
-//                this.players[i].getSaida().flush();
-//                if(this.players[i] == this.players[this.masterDaVez] && breaker == 0) {
-//                    if(this.players[i] != this.daVez){
-//                        this.master = this.players[this.masterDaVez];
-//                        this.players[i].getSaida().writeObject(1);
-//                    } else {
-//                        this.players[i].getSaida().writeObject(0);
-//                        this.masterDaVez = (this.masterDaVez + 1)%3;
-//                        this.master = this.players[this.masterDaVez];
-//                        this.master.getSaida().writeObject(1);
-//                        breaker = 1;
-//                    }
-//                } else {
-//                    if(breaker == 1){
-//                        breaker = 2;
-//                    }
-//                    else if(breaker == 0 || breaker == 2){
-//                        this.players[i].getSaida().writeObject(0);
-//                    }
-//                }
-//            }
             int i = this.masterDaVez;
             while( i < this.qtdPlayer ){
                 if(this.players[i] == this.daVez){
