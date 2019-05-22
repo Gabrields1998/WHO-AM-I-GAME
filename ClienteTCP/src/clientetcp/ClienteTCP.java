@@ -30,13 +30,12 @@ public class ClienteTCP {
             if(cli.getMaster() == 1) {
                 cli.dica(); // master define as dicas
                 cli.instrucoes(); // as intruções são exibidas para todos os players
-                System.out.println("\nAguardando Pergunta do Jogador da vez...");
-              while (true) {
+            while (true) {
                 cli.recebe(); // print -> 'jogo iniciado'
                 cli.recebe(); //espera a sugestão do player
                 cli.resposta(); // diz se a sugestão está certa ou não
                 cli.recebe(); // a mensagem se está certa ou não é exibida para todos os players
-                System.out.println("Aguardando Tentativa..."); // espera uma tentativa.
+                System.out.println("\u001B[" + "33" + "m" + "Aguardando Tentativa..."+ "\u001B[" + "m"); // espera uma tentativa.
                 cli.recebe(); // recebe a tentativa de acerto do player
                 cli.acertou();// diz se o player acertou ou não
                 cli.recebe(); // recebe a mensagem que acabou de enviar "se está certo ou não"
@@ -45,7 +44,7 @@ public class ClienteTCP {
                     cli.setDaVez(); // seta o próximo player da Vez
                 } else { // caso tenha acertado : 
                     cli.setDaVez(); // seta o player da vez
-                    System.out.println("Acertou"); 
+                    System.out.println("\u001B[" + "32" + "m" + "----------Acertou!!!---------" + "\u001B[" + "m"); 
                     cli.continuaGame(); // o mestre vai definir se continua ou não continua o jogo.
                     cli.recebe(); // recebe a mensagem -> jogo vai continuar ou não.
                     cli.setContinuaGame(); // seta a variável responsável pelo controle da continuação do jogo
@@ -61,13 +60,14 @@ public class ClienteTCP {
                 }
             }
           } else {
+            System.out.println("\u001B[" + "33" + "m" + "Aguardando definição de dica e resposta pelo MESTRE...\n " + "\u001B[" + "m");
             cli.instrucoes();
             while (true) {
                 cli.recebe(); // recebe a dica definida pelo mestre
                 if(cli.getDaVez() == 1){ // caso esse player seja o da vez
                   cli.pergunta(); // ele pergunta.
                 } else { // se não
-                    System.out.println("\nAguardando Resposta..."); // aguarda 
+                    System.out.println("\u001B[" + "33" + "m" + "\nAguardando Pergunta..." + "\u001B[" + "m"); // aguarda 
                 }
                 cli.recebe(); // recebe a pergunta do player da vez
                 cli.recebe(); // recebe a resposta do master
@@ -75,7 +75,7 @@ public class ClienteTCP {
                 if(cli.getDaVez() == 1){ // caso esse player seja o da vez
                   cli.pergunta(); // ele tem direito ao a uma tentativa de chute.
                 }else { // caso contrario
-                    System.out.println("Aguardando Tentativa..."); // espera uma tentativa.
+                    System.out.println("\u001B[" + "33" + "m" + "Aguardando Tentativa..." + "\u001B[" + "m"); // espera uma tentativa.
                 }
                 cli.recebe(); // recebe a tentativa do player da vez
                 cli.recebe(); // recebe a resposta do mestre
@@ -83,8 +83,9 @@ public class ClienteTCP {
                 if(cli.getBreakGame() == 0){ // caso o player da vez tenha errado: 
                     cli.setDaVez(); // segue a pertida
                 } else { // caso tenha acertado: 
-                    System.out.println("----------Acertou!!!---------");
+                    System.out.println("\u001B[" + "32" + "m" + "----------Acertou!!!---------" + "\u001B[" + "m");
                     cli.setDaVez(); // seta o da vez
+                    System.out.println( "\u001B[" + "33" + "m" + "Aguarde a confirmação do Master de que o jogo vai continuar ou não \n" + "\u001B[" + "m" );
                     cli.recebe(); // recebe mendagem -> o jogo vai continuar ou não
                     cli.setContinuaGame(); // seta a variável responsável pelo controle da continuação do jogo
                     if(cli.getContinuaGame() == 1){ // caso o jogo vá continuar:
@@ -101,6 +102,5 @@ public class ClienteTCP {
           }
           cli.leitor(path);
         }
-
     }
 }

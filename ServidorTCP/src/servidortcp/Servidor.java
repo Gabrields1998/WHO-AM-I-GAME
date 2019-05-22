@@ -69,16 +69,19 @@ public class Servidor{
     }
     
     public void apresentaPlayers(Cliente cliente) {
+        String CSI = "\u001B[";
         try {
                 cliente.setSaida(new ObjectOutputStream(cliente.getMySocket().getOutputStream()));
                 cliente.getSaida().flush();
                 
                 cliente.getSaida().writeObject(
-                                  "-------------------------------------------------\n"
-                                + "------------BEM VINDO AO (WHO-I-AM?)-------------\n"
-                                + "-------------------------------------------------\n"
-                                + "Atualmente ha: " + this.qtdeListaEspera + "conectados\n"
-                                + "Seu jogo ira iniciar quando houver 3 ou mais players!!! Aguarde.\n");
+                                CSI + "33" + "m" + "-------------------------------------------------\n" +
+                                CSI + "33" + "m" + "------------BEM VINDO AO (WHO-I-AM?)-------------\n" + 
+                                CSI + "33" + "m" + "-------------------------------------------------\n" +
+                                CSI + "33" + "m" + "Atualmente ha: " + this.qtdeListaEspera + " jogador(es) conectados\n" +
+                                CSI + "33" + "m" + "Seu jogo ira iniciar quando houver 3 ou mais players!!! Aguarde.\n" +
+                                CSI + "m"        
+                );
         } catch(Exception e) {
             System.out.println("Erro -> Servidor: apresentaPlayers " + e.getMessage());
         }

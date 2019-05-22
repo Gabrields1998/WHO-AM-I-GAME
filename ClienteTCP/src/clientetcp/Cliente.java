@@ -31,24 +31,25 @@ public class Cliente {
     }
     
     public void leitor(String path) throws IOException {
+        String CSI = "\u001B[";
         try{
-            System.out.println("--------------------------------");
-            System.out.println("---------------SCORE------------");
-            System.out.println("--------------------------------");
+            System.out.println(CSI + "32" + "m" + "\n--------------------------------" + CSI + "m" );
+            System.out.println(CSI + "32" + "m" + "---------------SCORE------------" + CSI + "m");
+            System.out.println(CSI + "32" + "m" + "--------------------------------" + CSI + "m");
             BufferedReader buffRead = new BufferedReader(new FileReader(path));
             String linha = "";
             while (true) {
                 if (linha != null) {
-                    System.out.println(linha);
+                    System.out.println(CSI + "32" + "m" + linha + CSI + "m");
 
                 } else
                     break;
                 linha = buffRead.readLine();
             }
             buffRead.close();
-            System.out.println("--------------------------------");
-            System.out.println("---------------SCORE------------");
-            System.out.println("--------------------------------");
+            System.out.println(CSI + "32" + "m" + "\n--------------------------------" + CSI + "m");
+            System.out.println(CSI + "32" + "m" + "---------------SCORE------------" + CSI + "m");
+            System.out.println(CSI + "32" + "m" + "--------------------------------\n" + CSI + "m");
         } catch(IOException e){
             System.out.println("Erro -> Leitor: " + e.getMessage());
         }
@@ -87,8 +88,7 @@ public class Cliente {
             this.daVez = daVez;
             if(daVez == 1) {
                 System.out.println(
-                          "Você é o cara da vez \n" 
-                        + "Aguarde a confirmação do Master de que o jogo vai continuar ou não" );
+                        "\nVOCÊ É O CARA DA VEZ \n" );
             }
         } catch(Exception e) {
             System.out.println("Erro -> setDaVez" + e.getMessage());
@@ -252,7 +252,7 @@ public class Cliente {
     public void recebeInt() {
         try {
             this.breakGame = (Integer)entrada.readObject();
-            System.out.println(this.breakGame.toString());
+//            System.out.println(this.breakGame.toString());
         } catch(Exception e) {
             System.out.println("Erro recebeInt: " + e.getMessage());
         }

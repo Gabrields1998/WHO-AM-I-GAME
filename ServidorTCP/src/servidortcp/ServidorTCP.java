@@ -73,7 +73,6 @@ public class ServidorTCP {
                                             Logger.getLogger(ServidorTCP.class.getName()).log(Level.SEVERE, null, ex);
                                         }
                                         if(game.continuaGame() == 1) {
-                                           
                                            game.defineNewMaster();
                                            break;
                                         }else{

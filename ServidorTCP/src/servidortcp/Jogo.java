@@ -98,9 +98,9 @@ public class Jogo {
                 
                 if (linha != null) {
                     parcialBuffer = linha.split(" ");
-                    System.out.println("parcialBuffer: " + parcialBuffer[0]);
+//                    System.out.println("parcialBuffer: " + parcialBuffer[0]);
                     this.bufferArq[i].setNome(parcialBuffer[0]);
-                    System.out.println("parcialBuffer" + Integer.parseInt(parcialBuffer[1]));
+//                    System.out.println("parcialBuffer" + Integer.parseInt(parcialBuffer[1]));
                     this.bufferArq[i].setScore(Integer.parseInt(parcialBuffer[1]));
                 }
                 i++;
@@ -216,7 +216,7 @@ public class Jogo {
         } catch(Exception e) {
             System.out.println("Erro -> Jogo defineMaster " + e.getMessage());
         }
-        System.out.println("master definido como: " + this.master.getNome());
+        System.out.println("Master definido como: " + this.master.getNome());
     }
     
     public void defineDaVez() {
@@ -250,6 +250,7 @@ public class Jogo {
     }
     
     public void iniciaJogo(){
+        String CSI = "\u001B[";
         try {
             String listaNome = "";
             for (int i = 0; i < this.qtdPlayer; i++){
@@ -258,13 +259,12 @@ public class Jogo {
             for (int i = 0; i < this.qtdPlayer; i++){
                 this.players[i].getSaida().flush();
                 this.players[i].getSaida().writeObject(
-                        "-------------------------------------------------\n"
-                      + "-----------------INICIANDO PARTIDA---------------\n"
-                      + "-------------------------------------------------\n"
-                      + "Jogadores conectados atualmente: " + this.qtdPlayer +"\n"
-                      + listaNome + "\n"
-                      + "MESTRE da rodada: [" + this.master.getNome() + "]\n"
-                      + "Aguardando definição de dica e resposta pelo MESTRE...\n ");
+                    CSI + "33" + "m" + "-------------------------------------------------\n" +
+                    CSI + "33" + "m" + "-----------------INICIANDO PARTIDA---------------\n" +
+                    CSI + "33" + "m" + "-------------------------------------------------\n"
+                    + "Jogadores conectados atualmente: " + this.qtdPlayer +"\n"
+                    + listaNome + "\n"
+                    + "MESTRE da rodada: [" + this.master.getNome() + "]\n");
             }
         } catch(Exception e) {
             System.out.println("Erro -> Jogo: iniciaJogo" + e.getMessage());
@@ -272,19 +272,23 @@ public class Jogo {
     }
     
     public void enviaInstrucoes(){
+        String CSI = "\u001B[";
         try {
             for (int i = 0; i < this.qtdPlayer; i++){
                 this.players[i].getSaida().flush();
-                this.players[i].getSaida().writeObject(
-                        "-------------------------------------------------\n"
-                      + "------------------PARTIDA INICIADA---------------\n"
-                      + "-------------------------------------------------\n"
-                      + "MESTRE: " + "[" + this.master.getNome() + "]\n"
-                      + "DICA: " + this.dica + "\n\n"
-                      + "Instruções:\n"
-                      + "> Somente são permitidas perguntas com respostas do tipo SIM/NÃO\n"
-                      + "> Perguntas inadequadas serão invalidadas pelo MESTRE\n"
-                      + "JOGADOR perde a vez se fizer pergunta inadequada\n");
+                this.players[i].getSaida().writeObject( 
+                    CSI + "33" + "m" + "-------------------------------------------------\n" +
+                    CSI + "33" + "m" + "------------------PARTIDA INICIADA---------------\n" +
+                    CSI + "33" + "m" + "-------------------------------------------------\n" 
+                    + "MESTRE: " + "[" + this.master.getNome() + "]\n"
+                    + "DICA: " + this.dica + "\n\n"
+                    + CSI + "33" + "m" + "-------------------------------------------------\n" +
+                    CSI + "33" + "m" + "INSTRUÇÕES:\n" +
+                    CSI + "33" + "m" + "> Somente são permitidas perguntas com respostas do tipo SIM/NÃO\n" +
+                    CSI + "33" + "m" + "> Perguntas inadequadas serão invalidadas pelo MESTRE\n" +
+                    CSI + "33" + "m" + "JOGADOR perde a vez se fizer pergunta inadequada\n" +
+                    CSI + "m"
+                );
             }
         } catch(Exception e) {
             System.out.println("Erro -> Jogo: enviaInstrucoes " + e.getMessage());
@@ -323,7 +327,7 @@ public class Jogo {
             for (int i = 0; i < this.qtdPlayer; i++){
                 this.players[i].getSaida().flush();
                 this.players[i].getSaida().writeObject(
-                    "jogador da vez: " + "[" + this.daVez.getNome() + "]\n");
+                    "jogador da vez: " + "[" + this.daVez.getNome() + "]");
             }
             
             this.daVez.getSaida().flush();
@@ -349,7 +353,7 @@ public class Jogo {
         try {
 
             this.master.getSaida().flush();
-            this.master.getSaida().writeObject("Acertou a resposta?:");
+            this.master.getSaida().writeObject("\nAcertou a pergunta?:");
             
             String respostaRecebida = (String)this.master.getEntrada().readObject();
             String resposta = respostaRecebida;
@@ -368,7 +372,7 @@ public class Jogo {
     public void tentativa() {
         try {
             this.daVez.getSaida().flush();
-            this.daVez.getSaida().writeObject("Informe sua tentativa: \n");
+            this.daVez.getSaida().writeObject("\nInforme sua tentativa: ");
             String tentativaRecebida = (String)this.daVez.getEntrada().readObject();
             String tentativa = tentativaRecebida;
             System.out.println("tentativa recebida: " + tentativa + "\n");
@@ -401,10 +405,13 @@ public class Jogo {
                 for (int i = 0; i < this.qtdPlayer; i++){
                     this.players[i].getSaida().flush();
                     this.players[i].getSaida().writeObject(
-                        "[" + this.master.getNome() + "]: Errado");
+                        "\u001B[" + "31" + "m" +
+                        "[" + this.master.getNome() + "]: ----------Errado!!!---------" +
+                        "\u001B[" + "m"
+                    );
                 }
                 this.score -= 10;
-                System.out.println("Score atual: " + this.score);
+//                System.out.println("Score atual: " + this.score);
             } else if(resposta.equals("1")) {
                 this.breakGame = 1;
                 for (int i = 0; i < this.qtdPlayer; i++){
@@ -441,28 +448,29 @@ public class Jogo {
             
             String respostaRecebida = (String)this.master.getEntrada().readObject();
             String resposta = respostaRecebida;
+            System.out.print ("\u001B[" + "33" + "m");
             System.out.println("Continua ou Não continua:" + resposta + "\n");
-            
+            System.out.println ("\u001B[" + "m");
             if(resposta.equals("0")) {
                 this.continuaGame = 0;
                 for (int i = 0; i < this.qtdPlayer; i++){
                     this.players[i].getSaida().flush();
                     this.players[i].getSaida().writeObject(
-                        "[" + this.master.getNome() + "]: Jogo Encerrado");
+                        "[" + this.master.getNome() + "]: JOGO ENCERRADO. ");
                 }
             } else if(resposta.equals("1")) {
                 this.continuaGame = 1;
                 for (int i = 0; i < this.qtdPlayer; i++){
                     this.players[i].getSaida().flush();
                     this.players[i].getSaida().writeObject(
-                        "[" + this.master.getNome() + "]: Acertou, mas vamos continuar jogando");
+                        "[" + this.master.getNome() + "]: ACERTOU, E O JOGO CONTINUA...");
                 }
             } else {
                 this.continuaGame = 0;
                 for (int i = 0; i < this.qtdPlayer; i++){
                     this.players[i].getSaida().flush();
                     this.players[i].getSaida().writeObject(
-                        "[" + this.master.getNome() + "]: Opcao invalida, jogo encerrado");
+                        "[" + this.master.getNome() + "]: Opcao invalida, JOGO ENCERRADO");
                 }
             }
             
@@ -477,7 +485,7 @@ public class Jogo {
     }
     
     public void defineNewMaster(){
-    //---------------------defini master da vez---------------------------
+    //---------------------define master da vez---------------------------
         int breaker = 0;
         try {
             int i = this.masterDaVez;
@@ -499,7 +507,7 @@ public class Jogo {
                 }
             }
             this.masterDaVez = (this.masterDaVez + 1)%3;
- //---------------------defini master da vez---------------------------
+ //---------------------define master da vez---------------------------
         } catch(Exception e) {
             System.out.println("Erro -> Jogo: defineNewMaster " + e.getMessage());
         }
